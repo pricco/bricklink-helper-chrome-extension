@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 
 import { Menu, Dropdown, Button, Modal, Form, Input, Select, Progress } from 'antd';
-import { DownOutlined, MergeCellsOutlined, DeleteOutlined } from '@ant-design/icons';
+import { DownOutlined, MergeCellsOutlined, DeleteOutlined, CopyOutlined } from '@ant-design/icons';
 
+import Isolate from '../../Isolate';
 import { showWarning } from '../../utils';
 import { useConfiguration } from '../../Configuration';
 import { getWantedListItems, createWantedList, deleteWantedList, addItemsToWantedList } from '../../api';
-
-
-const getContainer = () => document.querySelector('#bhce-containers')
 
 
 const Status = ({ step, steps, message }) => {
@@ -19,7 +16,6 @@ const Status = ({ step, steps, message }) => {
       closable={false}
       maskClosable={false}
       closeIcon={null}
-      getContainer="#bhce-containers"
       centered
       footer={null}
     >
@@ -148,7 +144,6 @@ const MergeAction = ({ onCancel, onFinish, lists }) => {
         visible
         onOk={handleOk}
         onCancel={handleCancel}
-        getContainer="#bhce-containers"
         footer={[
           <Button key="cancel" onClick={handleCancel}>Cancel</Button>,
           <Button key="ok" onClick={handleOk} type="primary">Merge</Button>,
@@ -180,7 +175,7 @@ const MergeAction = ({ onCancel, onFinish, lists }) => {
             label="Condition"
             name="condition"
           >
-            <Select getPopupContainer={getContainer}>
+            <Select>
               <Select.Option value="any">If ≠ → set as Any</Select.Option>
               <Select.Option value="new">If ≠ → set as New</Select.Option>
               <Select.Option value="used">If ≠ → set as Used</Select.Option>
@@ -190,7 +185,7 @@ const MergeAction = ({ onCancel, onFinish, lists }) => {
             label="Max Price"
             name="maxprice"
           >
-            <Select getPopupContainer={getContainer}>
+            <Select>
               <Select.Option value="kmax">Keep max value</Select.Option>
               <Select.Option value="kmin">Keep min value</Select.Option>
             </Select>
@@ -199,7 +194,7 @@ const MergeAction = ({ onCancel, onFinish, lists }) => {
             label="Quantity Want"
             name="qwant"
           >
-            <Select getPopupContainer={getContainer}>
+            <Select>
               <Select.Option value="sum">Sum values</Select.Option>
               <Select.Option value="kmin">Keep min value</Select.Option>
               <Select.Option value="kmax">Keep max value</Select.Option>
@@ -209,7 +204,7 @@ const MergeAction = ({ onCancel, onFinish, lists }) => {
             label="Quantity Have"
             name="qhave"
           >
-            <Select getPopupContainer={getContainer}>
+            <Select>
               {/*
                 <Select.Option value="sum">Sum values</Select.Option>
                 <Select.Option value="kmin">Keep min value</Select.Option>
@@ -222,12 +217,68 @@ const MergeAction = ({ onCancel, onFinish, lists }) => {
             label="Notify"
             name="notify"
           >
-            <Select getPopupContainer={getContainer}>
+            <Select>
               <Select.Option value="no">If ≠ → set as No</Select.Option>
               <Select.Option value="yes">If ≠ → set as Yes</Select.Option>
             </Select>
           </Form.Item>
         </Form>
+      </Modal>
+      {progress && <Status {...progress} />}
+    </>
+  );
+}
+
+
+const DuplicateAction = ({ onCancel, onFinish, lists }) => {
+  const [progress, setProgress] = useState(null);
+
+  const handleCancel = () => {
+    onCancel();
+  };
+
+  const handleDuplicate = async () => {
+    const steps = lists.length;
+    const date = (new Date()).toISOString();
+    let step = 0;
+    for (const list of lists) {
+      const newName = `${list.name} [${date}]`;
+      setProgress({ step, steps, message: `Copying from "${list.name}" to "${newName}"...`});
+      let items = await getWantedListItems(list.id);
+      items = items.map(item => {
+        return {
+          itemID: item.itemID,
+          colorID: item.colorID,
+          wantedQty: item.wantedQty,
+          wantedQtyFilled: item.wantedQtyFilled,
+          wantedNew: item.wantedNew,
+          wantedNotify: item.wantedNotify,
+          wantedRemarks: item.wantedRemarks,
+          wantedPrice: item.wantedPrice,
+        };
+      });
+      const newId = await createWantedList(newName);
+      await addItemsToWantedList(newId, items);
+    }
+
+    setProgress({ step, steps, message: `Done. Reloading page.` });
+    window.location.href = '/v2/wanted/list.page';
+    onFinish();
+  };
+
+  return (
+    <>
+      <Modal
+        title="Duplicate Wanted Lists"
+        visible
+        onOk={handleDuplicate}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="cancel" onClick={handleCancel}>Cancel</Button>,
+          <Button key="ok" onClick={handleDuplicate} type="primary">{`Duplicate ${lists.length} wanted lists`}</Button>,
+        ]}
+      >
+        Are you sure you want to duplicate these wanted lists?
       </Modal>
       {progress && <Status {...progress} />}
     </>
@@ -262,7 +313,6 @@ const DeleteAction = ({ onCancel, onFinish, lists }) => {
         visible
         onOk={handleDelete}
         onCancel={handleCancel}
-        getContainer="#bhce-containers"
         footer={[
           <Button key="cancel" onClick={handleCancel}>Cancel</Button>,
           <Button key="ok" onClick={handleDelete} type="primary" danger>{`Delete ${lists.length} wanted lists`}</Button>,
@@ -278,6 +328,7 @@ const DeleteAction = ({ onCancel, onFinish, lists }) => {
 const Toolbar = () => {
   const ACTION_MERGE = 'M';
   const ACTION_DELETE = 'D';
+  const ACTION_DUPLICATE = 'U';
   const [action, setAction] = useState(null);
   const [selected, setSelected] = useState([]);
 
@@ -293,11 +344,11 @@ const Toolbar = () => {
           name,
         };
       });
-    if (newSelected.length > 1) {
+    if (newSelected.length > 0) {
       setSelected(newSelected);
       setAction(e.key);
     } else {
-      showWarning('Please select at least 2 lists to apply a bulk action.');
+      showWarning('Please select at least 1 list to apply a bulk action.');
     }
   };
 
@@ -315,6 +366,10 @@ const Toolbar = () => {
         <MergeCellsOutlined />
         Merge lists
       </Menu.Item>
+      <Menu.Item key={ACTION_DUPLICATE}>
+        <CopyOutlined />
+        Duplicate lists
+      </Menu.Item>
       <Menu.Item key={ACTION_DELETE}>
         <DeleteOutlined />
         Delete lists
@@ -324,12 +379,13 @@ const Toolbar = () => {
 
   return (
     <>
-      <Dropdown overlay={menu} getPopupContainer={getContainer}>
+      <Dropdown overlay={menu}>
         <Button>
           Bulk <DownOutlined />
         </Button>
       </Dropdown>
       {action === ACTION_MERGE  && <MergeAction lists={selected} onCancel={handleActionCancel} onFinish={handleActionFinish} />}
+      {action === ACTION_DUPLICATE  && <DuplicateAction lists={selected} onCancel={handleActionCancel} onFinish={handleActionFinish} />}
       {action === ACTION_DELETE  && <DeleteAction lists={selected} onCancel={handleActionCancel} onFinish={handleActionFinish} />}
     </>
   );
@@ -345,7 +401,10 @@ const WantedListBulk = () => {
       if (toolbarNode === null) {
          arrive = (searchNode) => {
           const newToolbarNode = document.createElement('span');
-          newToolbarNode.setAttribute('id', 'bhce-wantedlist-bulk');
+          newToolbarNode.setAttribute('id', 'bhce-anchor');
+          newToolbarNode.style.display = 'inline-block';
+          newToolbarNode.style.verticalAlign = 'middle';
+          newToolbarNode.style.paddingLeft = '10px';
           searchNode.appendChild(newToolbarNode);
           setToolbarNode(newToolbarNode);
         };
@@ -394,9 +453,10 @@ const WantedListBulk = () => {
   );
 
   if (toolbarNode) {
-    return ReactDOM.createPortal(
-      <Toolbar />,
-      toolbarNode,
+    return (
+      <Isolate node={toolbarNode}>
+        <Toolbar />
+      </Isolate>
     );
   } else {
     return (null);

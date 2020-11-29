@@ -1,7 +1,7 @@
 import { message } from 'antd';
 
 message.config({
-  getContainer: () => document.getElementById('bhce-containers'),
+  getContainer: () => document.querySelector('#bhce-safe'),
 });
 
 const showError = (error) => {

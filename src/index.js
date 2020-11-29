@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import Settings from './settings';
 import Inject from './inject';
 
-if (document.getElementById('bhce-containers') === null) {
+if (document.getElementById('bhce-safe') === null) {
   const div = document.createElement('div');
-  div.setAttribute('id', 'bhce-containers');
+  div.setAttribute('id', 'bhce-safe');
   document.body.appendChild(div);
 }
 

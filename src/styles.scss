@@ -1,4 +1,21 @@
-[id^=bhce-]  {
+@namespace svg "http://www.w3.org/2000/svg";
+
+.bhce-page {
+
+  &,
+  body {
+    padding: 0;
+    margin: 0;
+  }
+}
+
+#bhce-safe,
+#bhce-anchor #bhce-root,
+#bhce-settings #bhce-root {
+  :not(svg|*) {
+    all: revert;
+  }
+
   // -----------------------------------------------------------------------------------
   // Import
   @import '~antd/dist/antd';
@@ -21,14 +38,20 @@
   line-height:1.5;
   font-feature-settings:tnum,tnum;
   margin:0;
-}
 
-#bhce-settings {
-  margin: 20px auto;
-  max-width: 800px;
-}
 
-#bhce-wantedlist-bulk {
-  vertical-align: middle;
-  padding-left: 10px;
+  .ant-modal-root {
+    .ant-modal-mask,
+    .ant-modal-wrap  {
+      z-index: 2147483000; // Recruitee
+    }
+  }
+
+  .ant-message {
+    z-index: 2147483001; // Recruitee
+  }
+
+  .ant-select-dropdown {
+    z-index: 2147483000; // Recruitee
+  }
 }

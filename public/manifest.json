@@ -3,7 +3,7 @@
 
   "name": "BrickLink Helper Chrome Extension",
   "description": "Add some new features on top of the existing site.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "icons": {
     "16": "icon16x.png",
     "48": "icon48x.png",

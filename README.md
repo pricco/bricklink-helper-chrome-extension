@@ -2,7 +2,7 @@
 
 ## Features
 
-* Bulk delete for Wanted Lists
+* Bulk delete and duplicate for Wanted Lists
 * Merge wanted lists
 * Force page size for Wanted List's detail page
 

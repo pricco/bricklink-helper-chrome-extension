@@ -1,15 +1,15 @@
 {
   "name": "bhce",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "dependencies": {
-    "antd": "^4.0.0",
+    "antd": "^4.8.6",
     "arrive": "^2.4.1",
-    "node-sass": "^4.12.0",
-    "react": "^16.10.2",
-    "react-app-rewired": "^2.1.3",
+    "node-sass": "4.14.1",
+    "react": "^17.0.1",
+    "react-app-rewired": "^2.1.6",
     "react-dom": "^16.10.2",
-    "react-scripts": "3.4.0",
+    "react-scripts": "4.0.1",
     "recompose": "^0.30.0"
   },
   "scripts": {
