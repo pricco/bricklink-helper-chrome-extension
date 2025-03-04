@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { ConfigProvider } from 'antd';
 
-import './styles.scss';
+// import './styles.scss';
 
 const Isolate = ({ node, tag, children }) => {
   const Root = tag || 'div';

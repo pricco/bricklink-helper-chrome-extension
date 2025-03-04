@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import Settings from './settings';
 import Inject from './inject';
 
@@ -10,12 +10,16 @@ if (document.getElementById('bhce-safe') === null) {
 }
 
 if (document.getElementById('bhce-settings')) {
-  ReactDOM.render(<Settings />, document.getElementById('bhce-settings'));
+  const domNode = document.getElementById('bhce-settings');
+  const root = createRoot(domNode);
+  root.render(<Settings />);
 } else {
   if (document.getElementById('bhce-inject') === null) {
     const inject = document.createElement('div');
     inject.setAttribute('id', 'bhce-inject');
     document.body.appendChild(inject);
-    ReactDOM.render(<Inject />, document.getElementById('bhce-inject'));
+    const domNode = document.getElementById('bhce-inject');
+    const root = createRoot(domNode);
+    root.render(<Inject />);
   }
 }

@@ -63,5 +63,17 @@ const call = (params) => {
   );
 };
 
+export const fetchText = (...args) => {
+  return call({query: 'FetchText', args});
+};
+
+export const fetchJson = (...args) => {
+  return call({query: 'FetchJson', args});
+};
+
+export const fetchCancel = (id) => {
+  return call({query: 'FetchCancel', id});
+};
+
 export const getConfiguration = () => call({ query: 'GetConfiguration' });
 export const setConfiguration = (value) => call({ query: 'SetConfiguration', value });

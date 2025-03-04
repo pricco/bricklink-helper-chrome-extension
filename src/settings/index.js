@@ -5,7 +5,7 @@ import { HeartTwoTone } from '@ant-design/icons';
 import Isolate from '../Isolate';
 import { ConfigurationContextProvider } from '../Configuration';
 import EditSettings from './EditSettings';
-import '../styles.scss';
+// import '../styles.scss';
 
 
 const App = () => {
@@ -24,6 +24,11 @@ const App = () => {
                 <Tabs defaultActiveKey="about">
                   <Tabs.TabPane tab="About" key="about">
                     <h1>Features</h1>
+                    <h2>2025-03-04</h2>
+                    <ul>
+                      <li>Support for chrome manifest v3.</li>
+                      <li>Show price info on store's item.</li>
+                    </ul>
                     <h2>2020-11-29</h2>
                     <ul>
                       <li>Bulk duplicate wanted lists.</li>
