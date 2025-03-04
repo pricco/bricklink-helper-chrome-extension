@@ -27,7 +27,7 @@ const App = () => {
                     <h2>2025-03-04</h2>
                     <ul>
                       <li>Support for chrome manifest v3.</li>
-                      <li>Show price info on store's item.</li>
+                      <li>Show price info on each store's item.</li>
                     </ul>
                     <h2>2020-11-29</h2>
                     <ul>
